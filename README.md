@@ -31,3 +31,95 @@ Os funcionários podem agendar também consultas, e neste caso, os pacientes sã
 
 ## SOLUÇÃO
 
+- Diagrama
+
+![Diagrama em branco - Classe UML](https://user-images.githubusercontent.com/107438747/230696965-98ea3ae5-a718-4de2-aa73-6f34e131b5ee.png)
+
+- Código
+```
+CREATE TABLE funcionarios (
+    id_funcionario UNSIGNED AUTO_INCREMENT PRIMARY KEY,    
+    nome VARCHAR(100) NOT NULL,
+    rg VARCHAR(7) NOT NULL,
+    endereco VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE enfermeiros (
+    id_enfermeiro  UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ano_conclusao INT NOT NULL,
+    faculdade VARCHAR(100) NOT NULL,
+    titulo_projeto VARCHAR(100) NOT NULL,
+    id_funcionario INT NOT NULL,
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios (id_funcionario)
+);
+
+CREATE TABLE medicos (
+    id_medico UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    crm VARCHAR(6) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    conveniado BOOLEAN NOT NULL,
+    id_funcionario INT NOT NULL,
+    FOREIGN KEY (id_funcionario) REFERENCES funcionarios (id_funcionario)
+);
+
+CREATE TABLE especialidades (
+    id_especialidade UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE medicos_especialidades (
+    id_medico INT NOT NULL,
+    id_especialidade INT NOT NULL,
+    PRIMARY KEY (id_medico, id_especialidade),
+    FOREIGN KEY (id_medico) REFERENCES medicos (id_medico),
+    FOREIGN KEY (id_especialidade) REFERENCES especialidades (id_especialidade)
+);
+
+CREATE TABLE convenios (
+    id_convenio UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    sigla VARCHAR(20) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    hospital VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE medicos_convenios (
+    id_medico INT NOT NULL,
+    id_convenio INT NOT NULL,
+    desconto FLOAT NOT NULL,
+    PRIMARY KEY (id_medico, id_convenio),
+    FOREIGN KEY (id_medico) REFERENCES medicos (id_medico),
+    FOREIGN KEY (id_convenio) REFERENCES convenios (id_convenio)
+);
+
+CREATE TABLE pacientes (
+    id_paciente UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    rg VARCHAR(7) NOT NULL,
+    endereco VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE consultas (
+    id_consulta UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_medico INT NOT NULL,
+    id_paciente INT NOT NULL,
+    data_consulta DATE NOT NULL,
+    conveniado BOOLEAN NOT NULL,
+    FOREIGN KEY (id_medico) REFERENCES medicos (id_medico),
+    FOREIGN KEY (id_paciente) REFERENCES pacientes (id_paciente)
+);
+
+CREATE TABLE exames (
+    id_exame UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    local VARCHAR(100) NOT NULL,
+    data_exame DATE NOT NULL,
+    categoria VARCHAR(100) NOT NULL,
+    id_paciente INT NOT NULL,
+    id_convenio INT,
+    FOREIGN KEY (id_paciente) REFERENCES pacientes (id_paciente),
+    FOREIGN KEY (id_convenio) REFERENCES convenios (id_convenio)
+);
+```
+
